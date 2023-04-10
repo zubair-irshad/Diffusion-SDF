@@ -68,7 +68,7 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
 
     def __getitem__(self, idx): 
         
-        train_idx = random.randint(0, len(self.ids) - 1)
+        train_idx = random.randint(0, len(self.folders) - 1)
         near_surface_count = int(self.samples_per_mesh*0.7)
 
         # surface_file_name = os.path.join(self.data_source, self.folders[idx], 'surface.csv')
