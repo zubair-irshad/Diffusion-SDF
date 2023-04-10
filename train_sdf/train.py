@@ -26,7 +26,7 @@ from diff_utils.helpers import *
 
 from dataloader.pc_loader import PCloader
 from dataloader.sdf_loader import SdfLoader
-from dataloader.sdf_custom_dataloader import SdfCustomDataloader
+from dataloader.sdf_custom_dataloader import SdfLoaderCustom
 from dataloader.modulation_loader import ModulationLoader
 from pytorch_lightning.loggers import WandbLogger
 
@@ -38,7 +38,7 @@ def train():
         train_dataset = ModulationLoader(specs["data_path"], pc_path=specs.get("pc_path",None), split_file=split, pc_size=specs.get("total_pc_size", None))
     else:
         # train_dataset = SdfLoader(specs["DataSource"], split, pc_size=specs.get("PCsize",1024), grid_source=specs.get("GridSource", None), modulation_path=specs.get("modulation_path", None))
-        train_dataset = SdfCustomDataloader(specs["DataSource"], pc_size=specs.get("PCsize",1024))
+        train_dataset = SdfLoaderCustom(specs["DataSource"], pc_size=specs.get("PCsize",1024))
     train_dataloader = torch.utils.data.DataLoader(
             train_dataset,
             batch_size=args.batch_size, num_workers=args.workers,
