@@ -34,7 +34,6 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
 
         f=pd.read_csv(f, sep=',',header=None).values
         f = torch.from_numpy(f)
-        print("f", f.shape)
         half = int(subsample / 2) 
         neg_tensor = f[f[:,-1]<0]
         pos_tensor = f[f[:,-1]>0]
