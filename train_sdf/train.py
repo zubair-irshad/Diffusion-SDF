@@ -32,7 +32,7 @@ from pytorch_lightning.loggers import WandbLogger
 def train():
     
     # initialize dataset and loader
-    split = json.load(open(specs["TrainSplit"], "r"))
+    # split = json.load(open(specs["TrainSplit"], "r"))
     if specs['training_task'] == 'diffusion':
         train_dataset = ModulationLoader(specs["data_path"], pc_path=specs.get("pc_path",None), split_file=split, pc_size=specs.get("total_pc_size", None))
     else:
