@@ -15,13 +15,14 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
         samples_per_mesh=16000,
         pc_size=1024,
         modulation_path=None # used for third stage of training; needs to be set in config file when some modulation training had been filtered
-        self.samples_per_epoch = 20
+        
     ):
 
         self.samples_per_mesh = samples_per_mesh
         self.pc_size = pc_size
         self.folders = os.listdir(data_source)
         self.data_source = data_source
+        self.samples_per_epoch = 20
 
     def get_pcd(self, f, pc_size =1024):
         f=pd.read_csv(f, sep=',',header=None).values
