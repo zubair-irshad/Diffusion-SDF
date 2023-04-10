@@ -94,7 +94,7 @@ if __name__ == "__main__":
     )
 
     arg_parser.add_argument("--batch_size", "-b", default=1, type=int)
-    arg_parser.add_argument("--num_gpus", "-n_g", default=1, type=int)
+    arg_parser.add_argument("--num_gpus", "-ng", default=1, type=int)
     arg_parser.add_argument( "--workers", "-w", default=8, type=int)
 
     args = arg_parser.parse_args()
