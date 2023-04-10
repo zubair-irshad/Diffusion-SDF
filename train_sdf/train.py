@@ -76,7 +76,7 @@ def train():
     wandb_logger = WandbLogger()
     # precision 16 can be unstable; recommend using 32
     trainer = pl.Trainer(gpus=args.num_gpus, precision=32, max_epochs=specs["num_epochs"], callbacks=callbacks, log_every_n_steps=5,
-                        logger=wandb_logger, find_unused_parameters=False)
+                        logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=train_dataloader, ckpt_path=resume)
 
     
