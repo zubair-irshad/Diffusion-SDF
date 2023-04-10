@@ -22,7 +22,7 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
         self.pc_size = pc_size
         self.folders = os.listdir(data_source)
         self.data_source = data_source
-        self.samples_per_epoch = 20
+        self.samples_per_epoch = 20*len(self.folders)
 
     def get_pcd(self, f, pc_size =1024):
         f=pd.read_csv(f, sep=',',header=None).values
