@@ -5,6 +5,7 @@ import torch.utils.data
 
 import pandas as pd 
 import numpy as np
+import random
 
 class SdfLoaderCustom(torch.utils.data.Dataset):
 
@@ -14,6 +15,7 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
         samples_per_mesh=16000,
         pc_size=1024,
         modulation_path=None # used for third stage of training; needs to be set in config file when some modulation training had been filtered
+        self.samples_per_epoch = 20
     ):
 
         self.samples_per_mesh = samples_per_mesh
@@ -64,12 +66,17 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
 
 
     def __getitem__(self, idx): 
-
+        
+        train_idx = random.randint(0, len(self.ids) - 1)
         near_surface_count = int(self.samples_per_mesh*0.7)
 
-        surface_file_name = os.path.join(self.data_source, self.folders[idx], 'surface.csv')
-        grid_file_name = os.path.join(self.data_source, self.folders[idx], 'uniform.csv')
-        pcd_file_name = os.path.join(self.data_source, self.folders[idx], 'pcd.csv')
+        # surface_file_name = os.path.join(self.data_source, self.folders[idx], 'surface.csv')
+        # grid_file_name = os.path.join(self.data_source, self.folders[idx], 'uniform.csv')
+        # pcd_file_name = os.path.join(self.data_source, self.folders[idx], 'pcd.csv')
+
+        surface_file_name = os.path.join(self.data_source, self.folders[train_idx], 'surface.csv')
+        grid_file_name = os.path.join(self.data_source, self.folders[train_idx], 'uniform.csv')
+        pcd_file_name = os.path.join(self.data_source, self.folders[train_idx], 'pcd.csv')
 
         sdf_xyz, sdf_gt =  self.labeled_sampling(surface_file_name, near_surface_count)
         
@@ -89,4 +96,5 @@ class SdfLoaderCustom(torch.utils.data.Dataset):
         return data_dict
 
     def __len__(self):
-        return len(self.folders)
+        # return len(self.folders)
+        return self.samples_per_epoch
