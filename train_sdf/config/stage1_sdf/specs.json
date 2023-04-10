@@ -18,7 +18,7 @@
     "PCsize" : 1024,
   
     "num_epochs" : 100001,
-    "log_freq" : 5000,
+    "log_freq" : 100,
     "kld_weight" : 0.01,
     "latent_std" : 0.25,
   
