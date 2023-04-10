@@ -27,7 +27,7 @@ from diff_utils.helpers import *
 from dataloader.pc_loader import PCloader
 from dataloader.sdf_loader import SdfLoader
 from dataloader.modulation_loader import ModulationLoader
-
+from pytorch_lightning.loggers import WandbLogger
 
 def train():
     
@@ -36,7 +36,8 @@ def train():
     if specs['training_task'] == 'diffusion':
         train_dataset = ModulationLoader(specs["data_path"], pc_path=specs.get("pc_path",None), split_file=split, pc_size=specs.get("total_pc_size", None))
     else:
-        train_dataset = SdfLoader(specs["DataSource"], split, pc_size=specs.get("PCsize",1024), grid_source=specs.get("GridSource", None), modulation_path=specs.get("modulation_path", None))
+        # train_dataset = SdfLoader(specs["DataSource"], split, pc_size=specs.get("PCsize",1024), grid_source=specs.get("GridSource", None), modulation_path=specs.get("modulation_path", None))
+        train_dataset = SdfLoader(specs["DataSource"], pc_size=specs.get("PCsize",1024))
     train_dataloader = torch.utils.data.DataLoader(
             train_dataset,
             batch_size=args.batch_size, num_workers=args.workers,
@@ -69,10 +70,10 @@ def train():
         resume = os.path.join(args.exp_dir, ckpt)
     else:
         resume = None  
-
+    wandb_logger = WandbLogger()
     # precision 16 can be unstable; recommend using 32
-    trainer = pl.Trainer(gpus=-1, precision=32, max_epochs=specs["num_epochs"], callbacks=callbacks, log_every_n_steps=1,
-                        default_root_dir=os.path.join("tensorboard_logs", args.exp_dir))
+    trainer = pl.Trainer(gpus=args.num_gpus, precision=32, max_epochs=specs["num_epochs"], callbacks=callbacks, log_every_n_steps=5,
+                        logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=train_dataloader, ckpt_path=resume)
 
     
@@ -93,6 +94,7 @@ if __name__ == "__main__":
     )
 
     arg_parser.add_argument("--batch_size", "-b", default=1, type=int)
+    arg_parser.add_argument("--num_gpus", "-n_g", default=1, type=int)
     arg_parser.add_argument( "--workers", "-w", default=8, type=int)
 
     args = arg_parser.parse_args()

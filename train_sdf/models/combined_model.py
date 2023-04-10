@@ -92,8 +92,12 @@ class CombinedModel(pl.LightningModule):
 
         loss = sdf_loss + vae_loss
 
-        loss_dict =  {"sdf": sdf_loss, "vae": vae_loss}
-        self.log_dict(loss_dict, prog_bar=True, enable_graph=False)
+        # loss_dict =  {"sdf": sdf_loss, "vae": vae_loss}
+
+        self.log("train/sdf_loss", sdf_loss, on_step=True, prog_bar=True, logger=True)
+        self.log("train/vae", vae_loss, on_step=True, prog_bar=True, logger=True)
+
+        # self.log_dict(loss_dict, prog_bar=True, enable_graph=False)
 
         return loss
 
