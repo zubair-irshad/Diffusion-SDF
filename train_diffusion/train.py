@@ -1,24 +1,14 @@
 import math
 import copy
 import torch
-from torch import nn, einsum
 import torch.nn.functional as F
-from inspect import isfunction
-from collections import namedtuple
-from functools import partial
 
-from torchvision.utils import save_image
 from PIL import Image
 
 from torch.utils.data import Dataset, DataLoader
 
 from pathlib import Path
 from torch.optim import Adam
-from torchvision import transforms as T, utils
-
-from einops import rearrange, reduce
-from einops.layers.torch import Rearrange
-
 from tqdm.auto import tqdm
 
 #from accelerate import Accelerator
@@ -30,8 +20,6 @@ from utils.helpers import *
 
 #from sdf_model.model import *
 import json
-import numpy as np
-import pandas as pd 
 import os
 from statistics import mean
 from dataloader.modulation_custom_loader import ModulationLoaderCustom
@@ -153,8 +141,6 @@ class Trainer(object):
         # writer = SummaryWriter(log_dir=os.path.join("tensorboard_logs", args.exp_dir))
 
         with tqdm(initial = self.step, total = self.training_iters) as pbar:
-
-
             # diff_100 and 1000 loss refers to the losses when t<100 and 100<t<1000, respectively 
             # typically diff_100 approaches 0 while diff_1000 can still be relatively high
             current_loss = 0
