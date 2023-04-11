@@ -34,50 +34,52 @@ import numpy as np
 import pandas as pd 
 import os
 from statistics import mean
-
-from torch.utils.tensorboard import SummaryWriter
-
+from dataloader.modulation_custom_loader import ModulationLoaderCustom
+# from torch.utils.tensorboard import SummaryWriter
+import wandb
+wandb.login(key = '996ee27de02ee214ded37d491317d5a0567f6dc8')
+wandb.init(project = 'DiffusionSDF', tags = 'train_diffusion_uconditional')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-class Dataset(Dataset):
-    def __init__(self, data_path, split_file, pc_path=None, pc_size=None):
-        super().__init__()
+# class Dataset(Dataset):
+#     def __init__(self, data_path, pc_path=None, pc_size=None):
+#         super().__init__()
 
-        self.cond = pc_path is not None
+#         self.cond = pc_path is not None
 
-        if not self.cond:
-            self.modulations = unconditional_load_modulations(data_path, split_file)
-        else:
-            self.modulations, pc_paths = load_modulations(data_path, pc_path, split_file)
+#         if not self.cond:
+#             self.modulations = unconditional_load_modulations(data_path)
+#         else:
+#             self.modulations, pc_paths = load_modulations(data_path, pc_path)
 
-        #self.modulations = self.modulations[0:8]
-        #pc_paths = pc_paths[0:8]
+#         #self.modulations = self.modulations[0:8]
+#         #pc_paths = pc_paths[0:8]
 
-        print("data shape: ", self.modulations[0].shape)
-        print("dataset len: ", len(self.modulations))
-        assert args.batch_size <= len(self.modulations)
+#         print("data shape: ", self.modulations[0].shape)
+#         print("dataset len: ", len(self.modulations))
+#         assert args.batch_size <= len(self.modulations)
     
-        if self.cond:
-            print("loading ground truth point clouds...")            
-            lst = []
-            with tqdm(pc_paths) as pbar:
-                for i, f in enumerate(pc_paths):
-                    pbar.set_description("Point clouds loaded: {}/{}".format(i, len(pc_paths)))
-                    lst.append(sample_pc(f, pc_size))
-            self.point_clouds = lst
+#         if self.cond:
+#             print("loading ground truth point clouds...")            
+#             lst = []
+#             with tqdm(pc_paths) as pbar:
+#                 for i, f in enumerate(pc_paths):
+#                     pbar.set_description("Point clouds loaded: {}/{}".format(i, len(pc_paths)))
+#                     lst.append(sample_pc(f, pc_size))
+#             self.point_clouds = lst
 
-            assert len(self.point_clouds) == len(self.modulations)
+#             assert len(self.point_clouds) == len(self.modulations)
         
         
-    def __len__(self):
-        return len(self.modulations)
+#     def __len__(self):
+#         return len(self.modulations)
 
-    def __getitem__(self, index):
-        if self.cond:
-            return self.modulations[index], self.point_clouds[index]
-        else:
-            return self.modulations[index], False
+#     def __getitem__(self, index):
+#         if self.cond:
+#             return self.modulations[index], self.point_clouds[index]
+#         else:
+#             return self.modulations[index], False
     
 
 
@@ -136,7 +138,8 @@ class Trainer(object):
         #print(self.model)
         
         # dataset and dataloader
-        self.ds = Dataset(data_path, split_file, pc_path, total_pc_size)
+        # self.ds = Dataset(data_path, split_file, pc_path, total_pc_size)
+        self.ds = ModulationLoaderCustom(data_path, pc_path, total_pc_size)
         
         dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
         self.dl = cycle(dl)
@@ -147,7 +150,7 @@ class Trainer(object):
 
     def train(self):
 
-        writer = SummaryWriter(log_dir=os.path.join("tensorboard_logs", args.exp_dir))
+        # writer = SummaryWriter(log_dir=os.path.join("tensorboard_logs", args.exp_dir))
 
         with tqdm(initial = self.step, total = self.training_iters) as pbar:
 
@@ -170,8 +173,8 @@ class Trainer(object):
                 t = torch.randint(0, self.model.num_timesteps, (self.batch_size,), device=device).long()
                 loss, xt, target, pred, unreduced_loss = self.model(data, t, ret_pred_x=True, cond=pc)
 
-                writer.add_scalar("Train loss", loss, self.step)
-
+                # writer.add_scalar("Train loss", loss, self.step)
+                wandb.log({'Train loss': loss})
                 loss.backward()
 
                 pbar.set_description(f'loss: {loss.item():.4f}')
@@ -179,9 +182,13 @@ class Trainer(object):
                 if self.step%self.print_freq==0:
                     print("avg loss at {} iters: {}".format(self.step, current_loss / self.print_freq))
                     print("losses per time at {} iters: {}, {}, {}".format(self.step, mean(loss_100),mean(loss_500),mean(loss_1000)))
-                    writer.add_scalar("loss 100", mean(loss_100), self.step)
-                    writer.add_scalar("loss 500", mean(loss_500), self.step)
-                    writer.add_scalar("loss 1000", mean(loss_1000), self.step)
+                    wandb.log({'Diffusion loss 100': mean(loss_100)})
+                    wandb.log({'Diffusion loss 500': mean(loss_500)})
+                    wandb.log({'Diffusion loss 500': mean(loss_1000)})
+
+                    # writer.add_scalar("loss 100", mean(loss_100), self.step)
+                    # writer.add_scalar("loss 500", mean(loss_500), self.step)
+                    # writer.add_scalar("loss 1000", mean(loss_1000), self.step)
                     current_loss = 0
                     loss_100, loss_500, loss_1000  = [0], [0], [0]
 
@@ -198,8 +205,8 @@ class Trainer(object):
 
                 if self.step != 0 and self.step % self.save_and_sample_every == 0:
                     save_model(self.step, self.model, self.opt, loss.detach(), "{}/{}.pt".format(self.results_folder, self.step))
-                    writer.flush()
-        writer.close()
+        #             writer.flush()
+        # writer.close()
 
             
 if __name__ == "__main__":

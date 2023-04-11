@@ -30,6 +30,7 @@ from dataloader.sdf_custom_dataloader import SdfLoaderCustom
 from dataloader.modulation_loader import ModulationLoader
 import wandb
 wandb.login(key = '996ee27de02ee214ded37d491317d5a0567f6dc8')
+wandb.init(project = 'DiffusionSDF', tags = 'train_sdf_vae')
 from pytorch_lightning.loggers import WandbLogger
 
 def train():
