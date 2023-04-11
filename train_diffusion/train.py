@@ -105,7 +105,7 @@ class Trainer(object):
 
         self.batch_size = args.batch_size
 
-        self.training_iters = training_iters
+        self.training_iters = training_iters/1000
 
         # optimizer
         self.opt = Adam(self.model.parameters(), lr = train_lr)
