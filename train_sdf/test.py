@@ -49,7 +49,7 @@ def test_modulations():
 
             # point_cloud = data # filename = path to the csv file of sdf data
             point_cloud, cls_name, mesh_name = data # filename = path to the csv file of sdf data
-            filename = filename[0] # filename is a tuple
+            # filename = filename[0] # filename is a tuple
 
             # cls_name = filename.split("/")[-3]
             # mesh_name = filename.split("/")[-2]
