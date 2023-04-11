@@ -202,7 +202,7 @@ if __name__ == "__main__":
     output_dir = '/experiments/zubair/shapenet/diffusion_sdf'
 
     # recon_dir = os.path.join(args.exp_dir, "recon")
-    recon_dir = os.path.join(output_dir, "recon")
+    recon_dir = os.path.join(output_dir, "recon_unconditional_stage2")
     os.makedirs(recon_dir, exist_ok=True)
     
     if specs['training_task'] == 'modulation':
