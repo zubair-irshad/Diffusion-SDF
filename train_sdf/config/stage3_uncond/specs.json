@@ -1,13 +1,10 @@
 {
   "Description" : "end-to-end training (unconditional) on filtered couch dataset",
-  "DataSource" : "data",
-  "GridSource" : "grid_data",
-  "TrainSplit" : "data/splits/couch_all.json",
-  "TestSplit" : "data/splits/couch_all.json",
-  "modulation_path" : "config/stage1_sdf/modulations",
+  "DataSource" : "/experiments/zubair/shapenet/couch_sdf",
+  "modulation_path" : "config/stage1_sdf_custom/modulations",
 
-  "modulation_ckpt_path" : "config/stage1_sdf/last.ckpt",
-  "diffusion_ckpt_path" : "../train_diffusion/config/stage2_uncond/results/500000.pt",
+  "modulation_ckpt_path" : "config/stage1_sdf_custom/last.ckpt",
+  "diffusion_ckpt_path" : "../train_diffusion/config/stage2_uncond/results/100000.pt",
   
   "training_task": "combined",
 

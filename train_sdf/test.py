@@ -122,19 +122,21 @@ def test_generation():
             mesh.create_mesh(model.sdf_model, plane_feature, recon_dir+"/{}_recon".format(i), N=128, max_batch=2**21, from_plane_features=True)
     else:
         # load dataset, dataloader, model checkpoint
-        test_split = json.load(open(specs["TestSplit"]))
-        test_dataset = PCloader(specs["DataSource"], test_split, pc_size=specs.get("PCsize",1024), return_filename=True)
+        # test_split = json.load(open(specs["TestSplit"]))
+        test_dataset = PCloader(specs["DataSource"], pc_size=specs.get("PCsize",1024))
+        # test_dataset = PCloader(specs["DataSource"], test_split, pc_size=specs.get("PCsize",1024), return_filename=True)
         test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, num_workers=0)
 
         with tqdm(test_dataloader) as pbar:
             for idx, data in enumerate(pbar):
                 pbar.set_description("Files generated: {}/{}".format(idx, len(test_dataloader)))
 
-                point_cloud, filename = data # filename = path to the csv file of sdf data
+                point_cloud, cls_name, mesh_name = data # filename = path to the csv file of sdf data
+                # point_cloud, filename = data # filename = path to the csv file of sdf data
                 filename = filename[0] # filename is a tuple
 
-                cls_name = filename.split("/")[-3]
-                mesh_name = filename.split("/")[-2]
+                # cls_name = filename.split("/")[-3]
+                # mesh_name = filename.split("/")[-2]
                 outdir = os.path.join(recon_dir, "{}/{}".format(cls_name, mesh_name))
                 os.makedirs(outdir, exist_ok=True)
 
@@ -189,7 +191,7 @@ if __name__ == "__main__":
         help="continue from previous saved logs, integer value, 'last', or 'finetune'",
     )
 
-    arg_parser.add_argument("--num_samples", "-n", default=10, type=int, help='number of samples to generate and reconstruct')
+    arg_parser.add_argument("--num_samples", "-n", default=50, type=int, help='number of samples to generate and reconstruct')
 
     arg_parser.add_argument("--filter", default=False, help='whether to filter when sampling conditionally')
 
