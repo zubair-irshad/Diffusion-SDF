@@ -242,7 +242,8 @@ class Trainer(object):
                 
                 self.model.train()
                 data, pc = next(self.dl)
-                data = data.to(device)
+                data = data.squeeze(1).to(device)
+
 
                 if self.has_cond:
                     pc = perturb_point_cloud(pc, self.perturb_pc, self.pc_size, self.crop_percent).cuda()
