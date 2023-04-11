@@ -24,14 +24,16 @@ from diff_utils.helpers import *
 #from metrics.evaluation_metrics import *#compute_all_metrics
 #from metrics import evaluation_metrics
 
-from dataloader.pc_loader import PCloader
+# from dataloader.pc_loader import PCloader
+from dataloader.pc_custom_loader import PCloaderCustom as PCloader
 
 @torch.no_grad()
 def test_modulations():
     
     # load dataset, dataloader, model checkpoint
-    test_split = json.load(open(specs["TestSplit"]))
-    test_dataset = PCloader(specs["DataSource"], test_split, pc_size=specs.get("PCsize",1024), return_filename=True)
+    # test_split = json.load(open(specs["TestSplit"]))
+    # test_dataset = PCloader(specs["DataSource"], test_split, pc_size=specs.get("PCsize",1024), return_filename=True)
+    test_dataset = PCloader(specs["DataSource"], pc_size=specs.get("PCsize",1024), return_filename=True)
     test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, num_workers=0)
 
     ckpt = "{}.ckpt".format(args.resume) if args.resume=='last' else "epoch={}.ckpt".format(args.resume)
@@ -45,11 +47,12 @@ def test_modulations():
         for idx, data in enumerate(pbar):
             pbar.set_description("Files evaluated: {}/{}".format(idx, len(test_dataloader)))
 
-            point_cloud, filename = data # filename = path to the csv file of sdf data
+            # point_cloud = data # filename = path to the csv file of sdf data
+            point_cloud, cls_name, mesh_name = data # filename = path to the csv file of sdf data
             filename = filename[0] # filename is a tuple
 
-            cls_name = filename.split("/")[-3]
-            mesh_name = filename.split("/")[-2]
+            # cls_name = filename.split("/")[-3]
+            # mesh_name = filename.split("/")[-2]
             outdir = os.path.join(recon_dir, "{}/{}".format(cls_name, mesh_name))
             os.makedirs(outdir, exist_ok=True)
             mesh_filename = os.path.join(outdir, "reconstruct")
@@ -64,11 +67,11 @@ def test_modulations():
 
             # load the created mesh (mesh_filename), and compare with input point cloud
             # to calculate and log chamfer distance 
-            mesh_log_name = cls_name+"/"+mesh_name
-            try:
-                evaluate.main(point_cloud, mesh_filename, cd_file, mesh_log_name)
-            except Exception as e:
-                print(e)
+            # mesh_log_name = cls_name+"/"+mesh_name
+            # try:
+            #     evaluate.main(point_cloud, mesh_filename, cd_file, mesh_log_name)
+            # except Exception as e:
+            #     print(e)
 
 
             # save modulation vectors for training diffusion model for next stage
