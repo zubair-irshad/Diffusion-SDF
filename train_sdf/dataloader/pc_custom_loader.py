@@ -32,5 +32,5 @@ class PCloaderCustom(torch.utils.data.Dataset):
         pc = torch.from_numpy(f)
 
         pc_idx = torch.randperm(pc.shape[0])[:pc_size]
-        pc = pc[pc_idx].double()
+        pc = pc[pc_idx]
         return pc
