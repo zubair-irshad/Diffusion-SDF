@@ -84,7 +84,7 @@ def test_modulations():
                 #     continue
             outdir = os.path.join(latent_dir, "{}/{}".format(cls_name[0], mesh_name[0]))
             os.makedirs(outdir, exist_ok=True)
-            features = model.sdf_model.pointnet.get_plane_features(point_cloud.cuda())
+            features = model.sdf_model.pointnet.get_plane_features(point_cloud.float().cuda())
             features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
             latent = model.vae_model.get_latent(features) # (1, D*3)
             np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
