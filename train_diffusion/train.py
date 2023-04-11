@@ -127,11 +127,11 @@ class Trainer(object):
         
         # dataset and dataloader
         # self.ds = Dataset(data_path, split_file, pc_path, total_pc_size)
-        self.ds = ModulationLoaderCustom(data_path, pc_path, total_pc_size)
-        self.dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=False, num_workers=args.workers, drop_last=True)
+        ds = ModulationLoaderCustom(data_path, pc_path, total_pc_size)
+        # self.dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=False, num_workers=args.workers, drop_last=True)
 
-        # dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
-        # self.dl = cycle(dl)
+        dl = DataLoader(ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
+        self.dl = cycle(dl)
         save_code_to_conf(args.exp_dir)
         self.train()
 
@@ -194,96 +194,96 @@ class Trainer(object):
             loss_100, loss_500, loss_1000  = [0], [0], [0]
             while self.step < self.training_iters:
 
-                self.model.train()
-                # self.opt.zero_grad()
-                for data, pc in self.dl:
-                    self.opt.zero_grad()
-                    # data, pc = next(self.dl)
-                    data = data.squeeze(1).to(device)
-                    if self.has_cond:
-                        pc = perturb_point_cloud(pc, self.perturb_pc, self.pc_size, self.crop_percent).cuda()
-                    else:
-                        pc = None
+                # self.model.train()
+                # # self.opt.zero_grad()
+                # for data, pc in self.dl:
+                #     self.opt.zero_grad()
+                #     # data, pc = next(self.dl)
+                #     data = data.squeeze(1).to(device)
+                #     if self.has_cond:
+                #         pc = perturb_point_cloud(pc, self.perturb_pc, self.pc_size, self.crop_percent).cuda()
+                #     else:
+                #         pc = None
 
-                    # sample time 
-                    t = torch.randint(0, self.model.num_timesteps, (self.batch_size,), device=device).long()
-                    loss, xt, target, pred, unreduced_loss = self.model(data, t, ret_pred_x=True, cond=pc)
+                #     # sample time 
+                #     t = torch.randint(0, self.model.num_timesteps, (self.batch_size,), device=device).long()
+                #     loss, xt, target, pred, unreduced_loss = self.model(data, t, ret_pred_x=True, cond=pc)
 
-                    # writer.add_scalar("Train loss", loss, self.step)
-                    wandb.log({'Train loss': loss})
-                    loss.backward()
+                #     # writer.add_scalar("Train loss", loss, self.step)
+                #     wandb.log({'Train loss': loss})
+                #     loss.backward()
 
-                    pbar.set_description(f'loss: {loss.item():.4f}')
+                #     pbar.set_description(f'loss: {loss.item():.4f}')
 
-                    if self.step%self.print_freq==0:
-                        print("avg loss at {} iters: {}".format(self.step, current_loss / self.print_freq))
-                        print("losses per time at {} iters: {}, {}, {}".format(self.step, mean(loss_100),mean(loss_500),mean(loss_1000)))
-                        wandb.log({'Diffusion loss 100': mean(loss_100)})
-                        wandb.log({'Diffusion loss 500': mean(loss_500)})
-                        wandb.log({'Diffusion loss 500': mean(loss_1000)})
+                #     if self.step%self.print_freq==0:
+                #         print("avg loss at {} iters: {}".format(self.step, current_loss / self.print_freq))
+                #         print("losses per time at {} iters: {}, {}, {}".format(self.step, mean(loss_100),mean(loss_500),mean(loss_1000)))
+                #         wandb.log({'Diffusion loss 100': mean(loss_100)})
+                #         wandb.log({'Diffusion loss 500': mean(loss_500)})
+                #         wandb.log({'Diffusion loss 500': mean(loss_1000)})
 
-                        # writer.add_scalar("loss 100", mean(loss_100), self.step)
-                        # writer.add_scalar("loss 500", mean(loss_500), self.step)
-                        # writer.add_scalar("loss 1000", mean(loss_1000), self.step)
-                        current_loss = 0
-                        loss_100, loss_500, loss_1000  = [0], [0], [0]
+                #         # writer.add_scalar("loss 100", mean(loss_100), self.step)
+                #         # writer.add_scalar("loss 500", mean(loss_500), self.step)
+                #         # writer.add_scalar("loss 1000", mean(loss_1000), self.step)
+                #         current_loss = 0
+                #         loss_100, loss_500, loss_1000  = [0], [0], [0]
 
-                    current_loss += loss.detach().item()
+                #     current_loss += loss.detach().item()
 
-                    loss_100.extend(unreduced_loss[t<100].cpu().numpy())
-                    loss_500.extend(unreduced_loss[t<500].cpu().numpy())
-                    loss_1000.extend(unreduced_loss[t>500].cpu().numpy())
+                #     loss_100.extend(unreduced_loss[t<100].cpu().numpy())
+                #     loss_500.extend(unreduced_loss[t<500].cpu().numpy())
+                #     loss_1000.extend(unreduced_loss[t>500].cpu().numpy())
 
-                    self.opt.step()
-                    # self.opt.zero_grad()
-                    self.step += 1
-                    pbar.update(1)
+                #     self.opt.step()
+                #     # self.opt.zero_grad()
+                #     self.step += 1
+                #     pbar.update(1)
                     
                 # # loss, loss_100, loss_500,  loss_1000 = self.train_single_epoch(loss_100, loss_500, loss_1000, current_loss)
                 
-                # self.model.train()
-                # data, pc = next(self.dl)
-                # data = data.squeeze(1).to(device)
+                self.model.train()
+                data, pc = next(self.dl)
+                data = data.squeeze(1).to(device)
 
 
-                # if self.has_cond:
-                #     pc = perturb_point_cloud(pc, self.perturb_pc, self.pc_size, self.crop_percent).cuda()
-                # else:
-                #     pc = None
+                if self.has_cond:
+                    pc = perturb_point_cloud(pc, self.perturb_pc, self.pc_size, self.crop_percent).cuda()
+                else:
+                    pc = None
 
-                # # sample time 
-                # t = torch.randint(0, self.model.num_timesteps, (self.batch_size,), device=device).long()
-                # loss, xt, target, pred, unreduced_loss = self.model(data, t, ret_pred_x=True, cond=pc)
+                # sample time 
+                t = torch.randint(0, self.model.num_timesteps, (self.batch_size,), device=device).long()
+                loss, xt, target, pred, unreduced_loss = self.model(data, t, ret_pred_x=True, cond=pc)
 
-                # # writer.add_scalar("Train loss", loss, self.step)
-                # wandb.log({'Train loss': loss})
-                # loss.backward()
+                # writer.add_scalar("Train loss", loss, self.step)
+                wandb.log({'Train loss': loss})
+                loss.backward()
 
-                # pbar.set_description(f'loss: {loss.item():.4f}')
+                pbar.set_description(f'loss: {loss.item():.4f}')
 
-                # if self.step%self.print_freq==0:
-                #     print("avg loss at {} iters: {}".format(self.step, current_loss / self.print_freq))
-                #     print("losses per time at {} iters: {}, {}, {}".format(self.step, mean(loss_100),mean(loss_500),mean(loss_1000)))
-                #     wandb.log({'Diffusion loss 100': mean(loss_100)})
-                #     wandb.log({'Diffusion loss 500': mean(loss_500)})
-                #     wandb.log({'Diffusion loss 500': mean(loss_1000)})
+                if self.step%self.print_freq==0:
+                    print("avg loss at {} iters: {}".format(self.step, current_loss / self.print_freq))
+                    print("losses per time at {} iters: {}, {}, {}".format(self.step, mean(loss_100),mean(loss_500),mean(loss_1000)))
+                    wandb.log({'Diffusion loss 100': mean(loss_100)})
+                    wandb.log({'Diffusion loss 500': mean(loss_500)})
+                    wandb.log({'Diffusion loss 500': mean(loss_1000)})
 
-                #     # writer.add_scalar("loss 100", mean(loss_100), self.step)
-                #     # writer.add_scalar("loss 500", mean(loss_500), self.step)
-                #     # writer.add_scalar("loss 1000", mean(loss_1000), self.step)
-                #     current_loss = 0
-                #     loss_100, loss_500, loss_1000  = [0], [0], [0]
+                    # writer.add_scalar("loss 100", mean(loss_100), self.step)
+                    # writer.add_scalar("loss 500", mean(loss_500), self.step)
+                    # writer.add_scalar("loss 1000", mean(loss_1000), self.step)
+                    current_loss = 0
+                    loss_100, loss_500, loss_1000  = [0], [0], [0]
 
-                # current_loss += loss.detach().item()
+                current_loss += loss.detach().item()
 
-                # loss_100.extend( unreduced_loss[t<100].cpu().numpy())
-                # loss_500.extend( unreduced_loss[t<500].cpu().numpy())
-                # loss_1000.extend( unreduced_loss[t>500].cpu().numpy())
+                loss_100.extend( unreduced_loss[t<100].cpu().numpy())
+                loss_500.extend( unreduced_loss[t<500].cpu().numpy())
+                loss_1000.extend( unreduced_loss[t>500].cpu().numpy())
 
-                # self.opt.step()
-                # self.opt.zero_grad()
-                # self.step += 1
-                # pbar.update(1)
+                self.opt.step()
+                self.opt.zero_grad()
+                self.step += 1
+                pbar.update(1)
 
                 if self.step != 0 and self.step % self.save_and_sample_every == 0:
                     save_model(self.step, self.model, self.opt, loss.detach(), "{}/{}.pt".format(self.results_folder, self.step))
