@@ -166,6 +166,7 @@ class ConvPointnet(nn.Module):
             coord['yz'] = self.normalize_coordinate(p.clone(), plane='yz', padding=self.padding)
             index['yz'] = self.coordinate2index(coord['yz'], self.reso_plane)
 
+        print("p", p.dtype, p.shape)
         net = self.fc_pos(p)
 
         net = self.blocks[0](net)
