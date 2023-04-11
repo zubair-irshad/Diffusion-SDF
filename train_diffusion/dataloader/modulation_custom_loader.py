@@ -17,7 +17,7 @@ class ModulationLoaderCustom(torch.utils.data.Dataset):
 
         self.data_source = data_path
         self.pc_source = pc_path
-        self.samples_per_epoch = 100*self.folders
+        self.samples_per_epoch = 100*(len(self.folders))
         
     def get_pcd(self, f, pc_size =1024):
         f=pd.read_csv(f, sep=',',header=None).values
