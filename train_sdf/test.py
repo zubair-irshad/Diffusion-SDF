@@ -49,11 +49,11 @@ def test_modulations():
 
             # point_cloud = data # filename = path to the csv file of sdf data
             point_cloud, cls_name, mesh_name = data # filename = path to the csv file of sdf data
-            print("clas_name, mesh_name: ", cls_name, mesh_name)
+            print("clas_name, mesh_name: ", cls_name[0], mesh_name[0])
             # filename = filename[0] # filename is a tuple
             # cls_name = filename.split("/")[-3]
             # mesh_name = filename.split("/")[-2]
-            outdir = os.path.join(recon_dir, "{}/{}".format(cls_name, mesh_name))
+            outdir = os.path.join(recon_dir, "{}/{}".format(cls_name[0], mesh_name[0]))
             os.makedirs(outdir, exist_ok=True)
             mesh_filename = os.path.join(outdir, "reconstruct")
             
