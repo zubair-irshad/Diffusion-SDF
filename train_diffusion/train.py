@@ -180,7 +180,7 @@ class Trainer(object):
             self.opt.step()
             # self.opt.zero_grad()
             self.step += 1
-            return loss, loss_100, loss_500, loss_1000
+        return loss, loss_100, loss_500, loss_1000
 
     def train(self):
 
