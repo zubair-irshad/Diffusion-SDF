@@ -77,19 +77,19 @@ def test_modulations():
             # save modulation vectors for training diffusion model for next stage
             # filter based on the chamfer distance so that all training data for diffusion model is clean 
             # would recommend visualizing some reconstructed meshes and manually determining what chamfer distance threshold to use
-            try:
+            # try:
                 # skips modulations that have chamfer distance > 0.0018
                 # the filter also weighs gaps / empty space higher
                 # if not filter_threshold(mesh_filename, point_cloud, 0.0018): 
                 #     continue
-                outdir = os.path.join(latent_dir, "{}/{}".format(cls_name[0], mesh_name[0]))
-                os.makedirs(outdir, exist_ok=True)
-                features = model.sdf_model.pointnet.get_plane_features(point_cloud.cuda())
-                features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
-                latent = model.vae_model.get_latent(features) # (1, D*3)
-                np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
-            except Exception as e:
-                print(e)
+            outdir = os.path.join(latent_dir, "{}/{}".format(cls_name[0], mesh_name[0]))
+            os.makedirs(outdir, exist_ok=True)
+            features = model.sdf_model.pointnet.get_plane_features(point_cloud.cuda())
+            features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
+            latent = model.vae_model.get_latent(features) # (1, D*3)
+            np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
+            # except Exception as e:
+            #     print(e)
 
 
            
