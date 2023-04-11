@@ -16,10 +16,6 @@ class ModulationLoaderCustom(torch.utils.data.Dataset):
 
         self.data_source = data_path
         self.pc_source = pc_path
-        if self.conditional:
-            self.modulations, pc_paths = self.load_modulations(data_path, pc_path)
-        else:
-            self.modulations = self.unconditional_load_modulations(data_path)
         
     def get_pcd(self, f, pc_size =1024):
         f=pd.read_csv(f, sep=',',header=None).values
