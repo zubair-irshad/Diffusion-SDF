@@ -58,7 +58,7 @@ def test_modulations():
             mesh_filename = os.path.join(outdir, "reconstruct")
             
             # given point cloud, create modulations (e.g. 1D latent vectors)
-            model.sdf_model.pointnet.float()
+            print("point_cloud.shape: ", point_cloud.shape)
             plane_features = model.sdf_model.pointnet.get_plane_features(point_cloud.cuda())  # tuple, 3 items with ([1, D, resolution, resolution])
             plane_features = torch.cat(plane_features, dim=1) # ([1, D*3, resolution, resolution])
             recon = model.vae_model.generate(plane_features) # ([1, D*3, resolution, resolution])
