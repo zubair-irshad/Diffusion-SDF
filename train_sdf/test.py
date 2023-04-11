@@ -88,7 +88,7 @@ def test_modulations():
             features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
             latent = model.vae_model.get_latent(features) # (1, D*3)
             print("latent: ", latent.shape)
-            torch.save(latent, (os.path.join(outdir, "latent.pth")))
+            torch.save(latent.cpu(), (os.path.join(outdir, "latent.pth")))
             # np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
             # except Exception as e:
             #     print(e)

@@ -32,7 +32,7 @@ class ModulationLoaderCustom(torch.utils.data.Dataset):
         
         modulation_filename = os.path.join(self.data_source, self.folders[index], 'latent.pth')
         # latent = torch.from_numpy(np.loadtxt(modulation_filename)).float()
-        latent = torch.load(modulation_filename).float()
+        latent = torch.load(modulation_filename, map_location=torch.device('cpu')).float()
 
         if self.conditional:
             pcd_file_name = os.path.join(self.pc_source, self.folders[index], 'pcd.csv')
