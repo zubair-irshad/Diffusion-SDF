@@ -200,8 +200,6 @@ class DiffusionNet(nn.Module):
             #     cond_feature[:,mask] = torch.zeros((mask.shape[0], cond_feature.shape[-1]), device=data.device)
 
             #print("cond feature shape: ", cond_feature.shape) # B, num_points (500), dim (512)
-        
-        print("data.shape", *data.shape)
             
         batch, dim, device, dtype = *data.shape, data.device, data.dtype
 
