@@ -128,7 +128,7 @@ class Trainer(object):
         # dataset and dataloader
         # self.ds = Dataset(data_path, split_file, pc_path, total_pc_size)
         self.ds = ModulationLoaderCustom(data_path, pc_path, total_pc_size)
-        self.dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
+        #self.dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
 
         dl = DataLoader(self.ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=args.workers, drop_last=True)
         self.dl = cycle(dl)
