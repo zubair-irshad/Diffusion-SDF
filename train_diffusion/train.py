@@ -88,7 +88,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 class Trainer(object):
     def __init__(
         self,
-        data_path, split_file, diffusion_specs, model_specs, 
+        data_path, diffusion_specs, model_specs, 
         train_lr = 1e-5, training_iters = 100000, desc='',
         save_and_sample_every = 10000, save_model=True, print_freq=1000,
         pc_path = None, total_pc_size = None, sample_pc_size = None, perturb_pc=None, crop_percent=0.25,
