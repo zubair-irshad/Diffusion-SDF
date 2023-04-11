@@ -87,6 +87,7 @@ def test_modulations():
             features = model.sdf_model.pointnet.get_plane_features(point_cloud.float().cuda())
             features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
             latent = model.vae_model.get_latent(features) # (1, D*3)
+            print("latent: ", latent.shape)
             np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
             # except Exception as e:
             #     print(e)
