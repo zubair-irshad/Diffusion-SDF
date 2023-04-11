@@ -21,7 +21,8 @@ class PCloaderCustom(torch.utils.data.Dataset):
         # train_idx = random.randint(0, len(self.folders) - 1)
         pcd_file_name = os.path.join(self.data_source, self.folders[idx], 'pcd.csv')
         pc = self.get_pcd(pcd_file_name, pc_size=self.pc_size)
-        return pc, 'couch', self.folders[idx]
+        category_name = 'couch'
+        return pc, category_name, self.folders[idx]
 
     def __len__(self):
         return len(self.folders)
