@@ -38,7 +38,5 @@ class ModulationLoaderCustom(torch.utils.data.Dataset):
             pc = self.get_pcd(pcd_file_name, pc_size=self.pc_size)
         else:
             pc = False
-        return {
-            "point_cloud" : pc,
-            "latent" : latent         
-        }
+
+        return latent, pc
