@@ -82,7 +82,7 @@ def test_modulations():
                 # the filter also weighs gaps / empty space higher
                 # if not filter_threshold(mesh_filename, point_cloud, 0.0018): 
                 #     continue
-                outdir = os.path.join(latent_dir, "{}/{}".format(cls_name, mesh_name))
+                outdir = os.path.join(latent_dir, "{}/{}".format(cls_name[0], mesh_name[0]))
                 os.makedirs(outdir, exist_ok=True)
                 features = model.sdf_model.pointnet.get_plane_features(point_cloud.cuda())
                 features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
