@@ -169,7 +169,7 @@ class ConvPointnet(nn.Module):
         print("p", p.dtype, p.shape)
         print("fc pos weights",self.fc_pos.weight.dtype)
         print("fc pos bias",self.fc_pos.bias.dtype)
-        net = self.fc_pos(p.double())
+        net = self.fc_pos(p.float())
 
         net = self.blocks[0](net)
         for block in self.blocks[1:]:
