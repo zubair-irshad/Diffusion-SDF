@@ -30,8 +30,9 @@ class ModulationLoaderCustom(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         
-        modulation_filename = os.path.join(self.data_source, self.folders[index], 'latent.txt')
-        latent = torch.from_numpy(np.loadtxt(modulation_filename)).float()
+        modulation_filename = os.path.join(self.data_source, self.folders[index], 'latent.pth')
+        # latent = torch.from_numpy(np.loadtxt(modulation_filename)).float()
+        latent = torch.load(modulation_filename).float()
 
         if self.conditional:
             pcd_file_name = os.path.join(self.pc_source, self.folders[index], 'pcd.csv')

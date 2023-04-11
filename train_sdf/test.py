@@ -88,7 +88,8 @@ def test_modulations():
             features = torch.cat(features, dim=1) # ([1, D*3, resolution, resolution])
             latent = model.vae_model.get_latent(features) # (1, D*3)
             print("latent: ", latent.shape)
-            np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
+            torch.save(latent, (os.path.join(outdir, "latent.pth")))
+            # np.savetxt(os.path.join(outdir, "latent.txt"), latent.cpu().numpy())
             # except Exception as e:
             #     print(e)
 
@@ -203,7 +204,7 @@ if __name__ == "__main__":
     os.makedirs(recon_dir, exist_ok=True)
     
     if specs['training_task'] == 'modulation':
-        latent_dir = os.path.join(args.exp_dir, "modulations")
+        latent_dir = os.path.join(args.exp_dir, "modulations_torch")
         os.makedirs(latent_dir, exist_ok=True)
         test_modulations()
     elif specs['training_task'] == 'combined':

@@ -1,6 +1,6 @@
 {
   "desc" : "training diffusion model using saved modulations, unconditional",
-  "data_path" : "../train_sdf/config/stage1_sdf_custom/modulations",
+  "data_path" : "../train_sdf/config/stage1_sdf_custom/modulations_torch",
 
   "train_lr" : 1e-5,
   "training_iters" : 1000001,
