@@ -167,6 +167,8 @@ class ConvPointnet(nn.Module):
             index['yz'] = self.coordinate2index(coord['yz'], self.reso_plane)
 
         print("p", p.dtype, p.shape)
+        print("fc pos weights",self.fc_pos.weight.dtype)
+        print("fc pos bias",self.fc_pos.bias.dtype)
         net = self.fc_pos(p.double())
 
         net = self.blocks[0](net)
