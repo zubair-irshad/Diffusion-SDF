@@ -48,7 +48,7 @@ def test_generation():
         # #model = model.load_from_checkpoint(specs["diffusion_ckpt_path"], specs=specs, strict=False)
 
         ckpt = torch.load(specs["diffusion_ckpt_path"])
-        model.diffusion_model.load_state_dict(ckpt['model_state_dict'])
+        model.load_state_dict(ckpt['model_state_dict'])
         model = model.cuda().eval()
     # else:
     #     # ckpt = "{}.ckpt".format(args.resume) if args.resume=='last' else "epoch={}.ckpt".format(args.resume)
