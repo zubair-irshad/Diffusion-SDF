@@ -155,6 +155,38 @@ class GaussianDiffusion(nn.Module):
         else:
             return x_T
 
+    # @torch.no_grad()
+    # def sample(self, dim, batch_size, noise=None, clip_denoised = True, traj=False, cond=None):
+
+    #     batch, device, objective = batch_size, self.betas.device, self.objective
+
+    #     traj = []
+
+    #     x_T = default(noise, torch.randn(batch, dim, device = device)) * self.noise_scale
+    #     #x_T = torch.clamp(x_T, -6.0 , 6.0)
+
+    #     for t in tqdm(reversed(range(0, self.num_timesteps)), desc = 'full sampling loop time step'):
+            
+    #         time_cond = torch.full((batch,), t, device = device, dtype = torch.long)
+
+    #         model_input = (x_T, cond) if cond is not None else x_T
+    #         pred_noise, x_start, *_ = self.model_predictions(model_input, time_cond)
+    #         if clip_denoised:
+    #             x_start.clamp_(-1., 1.)
+
+    #         model_mean, _, model_log_variance = self.q_posterior(x_start = x_start, x_t = x_T, t = time_cond)
+
+    #         noise = torch.randn_like(x_T) * self.noise_scale if t > 0 else 0. # no noise if t == 0
+
+    #         x_T = model_mean + (0.5 * model_log_variance).exp() * noise
+            
+    #         traj.append(x_T.clone())
+    
+    #     if traj:
+    #         return x_T, traj
+    #     else:
+    #         return x_T
+
     @torch.no_grad()
     def sample(self, dim, batch_size, noise=None, clip_denoised = True, traj=False, cond=None):
 
@@ -162,10 +194,9 @@ class GaussianDiffusion(nn.Module):
 
         traj = []
 
-        x_T = default(noise, torch.randn(batch, dim, device = device)) * self.noise_scale
-        #x_T = torch.clamp(x_T, -6.0 , 6.0)
+        x_T = default(noise, torch.randn(batch, dim, device = device))
 
-        for t in tqdm(reversed(range(0, self.num_timesteps)), desc = 'full sampling loop time step'):
+        for t in reversed(range(0, self.num_timesteps)):
             
             time_cond = torch.full((batch,), t, device = device, dtype = torch.long)
 
@@ -176,7 +207,7 @@ class GaussianDiffusion(nn.Module):
 
             model_mean, _, model_log_variance = self.q_posterior(x_start = x_start, x_t = x_T, t = time_cond)
 
-            noise = torch.randn_like(x_T) * self.noise_scale if t > 0 else 0. # no noise if t == 0
+            noise = torch.randn_like(x_T) if t > 0 else 0. # no noise if t == 0
 
             x_T = model_mean + (0.5 * model_log_variance).exp() * noise
             
