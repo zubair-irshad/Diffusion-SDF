@@ -168,6 +168,7 @@ class BetaVAE(nn.Module):
             kl_loss = l2_size_loss / latent.shape[0]
 
         else:
+            
             std = torch.exp(0.5 * log_var)
             gt_dist = torch.distributions.normal.Normal( torch.zeros_like(mu), torch.ones_like(std)*self.kl_std )
             sampled_dist = torch.distributions.normal.Normal( mu, std )

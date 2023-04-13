@@ -1,0 +1,23 @@
+{
+  "desc": "training diffusion model using saved modulations, unconditional",
+  "data_path": "/experiments/zubair/ckpts/vanilla_autodecoder_PDStepv3_GlobalLatent_KLDLoss/latent_save_2",
+  "train_lr": 1e-5,
+  "training_iters": 1000001,
+  "save_and_sample_every": 100000,
+  "print_freq": 1000,
+  "save_model": true,
+  "diffusion_specs": {
+    "timesteps": 1000,
+    "sampling_timesteps": 250,
+    "objective": "pred_x0",
+    "loss_type": "l2",
+    "noise_scale": 1.0
+  },
+  "model_specs": {
+    "dim": 256,
+    "dim_in_out": 256,
+    "depth": 4,
+    "ff_dropout": 0.3,
+    "cond": false
+  }
+}
