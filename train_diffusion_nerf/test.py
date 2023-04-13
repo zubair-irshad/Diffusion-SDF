@@ -38,6 +38,10 @@ def test_generation():
         #=============================================================================="
         #=============================================================================="
        
+        model = GaussianDiffusion(
+            model=DiffusionNet(**specs["diffusion_model_specs"]), **specs["diffusion_specs"]
+        )
+
         # model = CombinedModel.load_from_checkpoint(specs["modulation_ckpt_path"], specs=specs, strict=False) 
         # #model = model.load_from_checkpoint(specs["diffusion_ckpt_path"], specs=specs, strict=False)
 
