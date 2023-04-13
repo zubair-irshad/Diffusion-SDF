@@ -62,7 +62,7 @@ def test_generation():
     #currently only saving samples to a file so we can render them using NeRF script in other repos.
     #Currently only doing unconditional generation
 
-    samples = model.diffusion_model.generate_unconditional(args.num_samples)
+    samples = model.generate_unconditional(args.num_samples)
 
     print("samples shape: ", samples.shape)
 
