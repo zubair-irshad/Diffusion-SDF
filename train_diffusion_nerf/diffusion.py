@@ -243,3 +243,10 @@ class GaussianDiffusion(nn.Module):
         x *= self.data_scale.to(x.device)
         x += self.data_shift.to(x.device)
         return x 
+
+    def generate_unconditional(self, num_samples):
+        self.eval()
+        with torch.no_grad():
+            samp,_ = self.sample(dim=self.model.dim_in_out, batch_size=num_samples, traj=False, cond=None)
+
+        return samp
