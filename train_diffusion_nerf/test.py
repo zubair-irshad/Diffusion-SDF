@@ -11,9 +11,7 @@ import os
 import json, csv
 import time
 from tqdm.auto import tqdm
-from einops import rearrange, reduce
 import numpy as np
-import trimesh
 import warnings
 
 # add paths in model/__init__.py for new models
