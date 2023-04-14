@@ -63,8 +63,10 @@ def test_generation():
     #Currently only doing unconditional generation
 
     samples = model.generate_unconditional(args.num_samples)
-
+    samples = samples.detach().cpu()
     print("samples shape: ", samples.shape)
+    torch.save(samples, os.path.join(recon_dir, "unconditional_latents.pth"))
+
 
 
         
@@ -161,7 +163,7 @@ if __name__ == "__main__":
     output_dir = '/experiments/zubair/shapenet/diffusion_sdf'
 
     # recon_dir = os.path.join(args.exp_dir, "recon")
-    recon_dir = os.path.join(output_dir, "recon_unconditional_stage2")
+    recon_dir = os.path.join(output_dir, "nerf_unconditional_latent_kld_shape")
     os.makedirs(recon_dir, exist_ok=True)
     
     test_generation()
